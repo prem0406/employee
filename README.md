@@ -19,6 +19,8 @@ This is a simple Node.js + Express.js REST API that connects to a MongoDB databa
 ```
 employee-api/
 ├── index.js              # Main app file
+├── mongo.js
+├── package-lock.json
 ├── package.json
 ├── Dockerfile
 └── README.md
@@ -35,7 +37,7 @@ employee-api/
 - MongoDB running in Kubernetes with:
   - DB: `company`
   - Collection: `employee`
-  - Auth: `admin` / `admin123`
+  - Auth: `admin` / `admin123` (Stored in GKE secrets)
 
 ---
 
@@ -47,19 +49,13 @@ employee-api/
 npm install
 ```
 
-### 2. Start the app (connect to MongoDB in K8s via port-forward)
-
-```bash
-kubectl port-forward svc/mongodb-service 27017:27017
-```
-
-### 3. Update MongoDB URI in `index.js` if needed:
+### 2. Update MongoDB URI in `index.js` if needed:
 
 ```js
 const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
 ```
 
-### 4. Run the API server
+### 3. Run the API server
 
 ```bash
 node index.js
@@ -72,7 +68,7 @@ The app runs on:
 
 ## 📬 API Endpoints
 
-### ➕ `POST /employees`
+### ➕ `POST /employees/add`
 
 Create a new employee record.
 
@@ -81,7 +77,8 @@ Create a new employee record.
 ```json
 {
   "name": "Alice",
-  "empCode": "E101"
+  "empCode": "E101",
+  "mobile": "77777777"
 }
 ```
 
