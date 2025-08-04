@@ -132,11 +132,17 @@ curl http://your-domain/employee
 
 ## Mongodb deployment
 
+Following command is to store the db credentials into Secrets
+
 ```bash
 kubectl create secret generic mongodb-secret \
   --from-literal=MONGO_INITDB_ROOT_USERNAME=admin \
   --from-literal=MONGO_INITDB_ROOT_PASSWORD=admin123
+```
 
+Apply mongodb StateFulSet
+
+```bash
 kubectl apply -f mongo-headless-service.yaml
 kubectl apply -f mongo-statefulset.yaml
 kubectl apply -f mongo-service.yaml
