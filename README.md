@@ -116,6 +116,7 @@ kubectl apply -f mongo-service.yaml
 kubectl apply -f employee-api-configmap.yaml
 kubectl apply -f employee-api-deployment.yaml
 kubectl apply -f employee-api-service.yaml
+kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.9.4/deploy/static/provider/cloud/deploy.yaml
 kubectl apply -f employee-api-ingress.yaml
 ```
 
