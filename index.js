@@ -3,7 +3,8 @@ const connectToCluster = require("./mongo");
 const { config } = require("dotenv");
 
 config();
-const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
+const uri = process.env.MONGODB_URI;
+// const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
 
 const app = express();
 app.use(express.json());
@@ -17,14 +18,12 @@ app.get("/employee", async (req, res) => {
     const db = mongoClient.db("company");
     const collection = db.collection("employees");
     const employees = await collection.find().toArray();
-    console.log("***", employees);
     res.send(employees);
   } catch (error) {
     console.log("GET: Connection to MongoDB failed!", error);
   } finally {
     await mongoClient.close();
   }
-  res.send({ text: "Hello World!" });
 });
 
 app.post("/employee/add", async (req, res) => {
