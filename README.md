@@ -62,7 +62,7 @@ employee-api/
 
 ## 📬 API Endpoints
 
-### ➕ POST /employees/add
+### ➕ POST /employee/add
 
 Create a new employee record
 
@@ -85,8 +85,8 @@ Retrieve all employees
 Build and run locally:
 
 ```bash
-docker build -t employee-api .
-docker run -p 3000:3000 employee-api
+docker build -t pr3mkumar/employee-api:v1 .
+docker run -p 3000:3000 pr3mkumar/employee-api:v1
 ```
 
 ---
@@ -96,8 +96,7 @@ docker run -p 3000:3000 employee-api
 ### 1. Push Docker image to DockerHub
 
 ```bash
-docker tag employee-api your-dockerhub/employee-api
-docker push your-dockerhub/employee-api
+docker push pr3mkumar/employee-api:v1
 ```
 
 ### 2. Apply manifests
@@ -113,12 +112,32 @@ Access the API via the configured domain in your Ingress.
 
 ---
 
+## Github link
+
+https://github.com/prem0406/employee
+
+## Docker hub link
+
+https://hub.docker.com/repository/docker/pr3mkumar/employee-api/general
+
+---
+
 ## 🧪 Example curl
 
 ```bash
-curl -X POST http://your-domain/employees/add   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123", "mobile": "99999999"}'
+curl -X POST http://your-domain/employee/add   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123", "mobile": "99999999"}'
 
-curl http://your-domain/employees
+curl http://your-domain/employee
 ```
 
----
+## Mongodb deployment
+
+```bash
+kubectl create secret generic mongodb-secret \
+  --from-literal=MONGO_INITDB_ROOT_USERNAME=admin \
+  --from-literal=MONGO_INITDB_ROOT_PASSWORD=admin123
+
+kubectl apply -f mongo-headless-service.yaml
+kubectl apply -f mongo-statefulset.yaml
+kubectl apply -f mongo-service.yaml
+```

@@ -4,12 +4,15 @@ const { config } = require("dotenv");
 
 config();
 const uri = process.env.MONGODB_URI;
-// const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 const port = 3000;
+
+app.get("/", async (req, res) => {
+  res.send("Employee service and UP and RUNNING...");
+});
 
 app.get("/employee", async (req, res) => {
   let mongoClient;
@@ -21,6 +24,7 @@ app.get("/employee", async (req, res) => {
     res.send(employees);
   } catch (error) {
     console.log("GET: Connection to MongoDB failed!", error);
+    res.send("GET: Connection to MongoDB failed!");
   } finally {
     await mongoClient.close();
   }
@@ -37,6 +41,7 @@ app.post("/employee/add", async (req, res) => {
     res.send(`${employee.empCode} is created`);
   } catch (error) {
     console.log("POST: Connection to MongoDB failed!", error);
+    res.send("POST: Connection to MongoDB failed!");
   } finally {
     await mongoClient.close();
   }
