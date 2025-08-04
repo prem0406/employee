@@ -3,7 +3,7 @@ const connectToCluster = require("./mongo");
 const { config } = require("dotenv");
 
 config();
-const uri = process.env.MONGODB_URI;
+const uri = `mongodb://${process.env.MONGODB_USERNAME}:${process.env.MONGODB_PASSWORD}@${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}/${process.env.MONGODB_DB}?authSource=${process.env.MONGODB_AUTH_SOURCE}`;
 
 const app = express();
 app.use(express.json());

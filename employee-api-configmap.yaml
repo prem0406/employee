@@ -3,4 +3,7 @@ kind: ConfigMap
 metadata:
   name: employee-api-config
 data:
-  MONGODB_URI: mongodb://admin:admin123@mongodb-0.mongodb-headless.default.svc.cluster.local:27017/company?authSource=admin
+  MONGODB_HOST: mongodb-0.mongodb-headless.default.svc.cluster.local
+  MONGODB_PORT: "27017"
+  MONGODB_DB: company
+  MONGODB_AUTH_SOURCE: admin

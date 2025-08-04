@@ -14,9 +14,37 @@ spec:
     spec:
       containers:
         - name: employee-api
-          image: pr3mkumar/employee-api:v1
+          image: pr3mkumar/employee-api:v2
           ports:
             - containerPort: 3000
-          envFrom:
-            - configMapRef:
-                name: employee-api-config
+          env:
+            - name: MONGODB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_USERNAME
+            - name: MONGODB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mongodb-secret
+                  key: MONGO_INITDB_ROOT_PASSWORD
+            - name: MONGODB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: employee-api-config
+                  key: MONGODB_HOST
+            - name: MONGODB_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: employee-api-config
+                  key: MONGODB_PORT
+            - name: MONGODB_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: employee-api-config
+                  key: MONGODB_DB
+            - name: MONGODB_AUTH_SOURCE
+              valueFrom:
+                configMapKeyRef:
+                  name: employee-api-config
+                  key: MONGODB_AUTH_SOURCE
