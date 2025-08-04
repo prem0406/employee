@@ -38,6 +38,7 @@ employee-api/
 ├── package-lock.json
 ├── package.json
 ├── Dockerfile
+├── employee-api-configmap.yaml
 ├── employee-api-deployment.yaml
 ├── employee-api-service.yaml
 ├── employee-api-ingress.yaml
@@ -56,30 +57,6 @@ employee-api/
 | **Ingress**               | Cleaner, cost-effective way to expose service with domain mapping                    |
 | **Express.js**            | Lightweight, minimal overhead web framework ideal for microservices                  |
 | **MongoDB Native Driver** | Avoids ORM overhead; ideal for small projects and direct operations                  |
-
----
-
-## 🛠️ Setup & Deployment
-
-### 1. Install dependencies
-
-```bash
-npm install
-```
-
-Update `index.js` connection string if testing locally:
-
-```js
-const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
-```
-
-### 3. Run the server
-
-```bash
-node index.js
-```
-
-The API will be accessible at: `http://localhost:3000`
 
 ---
 
@@ -126,6 +103,7 @@ docker push your-dockerhub/employee-api
 ### 2. Apply manifests
 
 ```bash
+kubectl apply -f employee-api-configmap.yaml
 kubectl apply -f employee-api-deployment.yaml
 kubectl apply -f employee-api-service.yaml
 kubectl apply -f employee-api-ingress.yaml
@@ -138,7 +116,7 @@ Access the API via the configured domain in your Ingress.
 ## 🧪 Example curl
 
 ```bash
-curl -X POST http://your-domain/employees   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123"}'
+curl -X POST http://your-domain/employees/add   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123", "mobile": "99999999"}'
 
 curl http://your-domain/employees
 ```
