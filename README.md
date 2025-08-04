@@ -1,47 +1,65 @@
 # Employee REST API with MongoDB
 
-This is a simple Node.js + Express.js REST API that connects to a MongoDB database to manage employee records. It allows creating and retrieving employee entries in a `company` database and `employee` collection.
+A Node.js + Express.js microservice deployed on Kubernetes (GKE) and backed by a MongoDB StatefulSet for storing employee data.
 
 ---
 
-## 📦 Features
+## 📘 Requirement Understanding
 
-- REST API with Express.js
-- Uses native MongoDB driver (`mongodb`)
-- Connects to MongoDB deployed in **Google Kubernetes Engine (GKE)**
-- Supports basic `POST` and `GET` operations
-- Ready for Docker + Kubernetes deployment
+Build a lightweight REST API to store and retrieve employee data using MongoDB. The system should be containerized, deployed in Kubernetes (Google Kubernetes Engine), and publicly accessible via Ingress.
 
----
+## 📎 Assumptions
 
-## 📁 Project Structure
+- MongoDB will be used as the backend data store.
+- MongoDB credentials (`admin` / `admin123` provider here as plain text for Evaluators) are stored as a Kubernetes secret.
+- The database and collection used are:
+  - DB: `company`
+  - Collection: `employee`
+- Each employee entry has fields:
+  - `name` (string)
+  - `empCode` (string)
+  - `mobile` (string)
+- Public access is managed through Kubernetes Ingress, not LoadBalancer.
+
+## 🌐 Solution Overview
+
+- REST API built with Node.js and Express.js
+- MongoDB is deployed via a Kubernetes StatefulSet for persistence
+- REST API is Exposed via Kubernetes Ingress with an internal `ClusterIP` service
+- Uses the `mongodb` npm package for database connection
+- The app includes endpoints to add and fetch employee data
+
+### Project Structure
 
 ```
 employee-api/
-├── index.js              # Main app file
+├── index.js              # Main application logic
 ├── mongo.js
 ├── package-lock.json
 ├── package.json
 ├── Dockerfile
+├── employee-api-deployment.yaml
+├── employee-api-service.yaml
+├── employee-api-ingress.yaml
 └── README.md
 ```
 
 ---
 
-## 🔧 Prerequisites
+## 📊 Justification for the Resources Utilized
 
-- Node.js (v18 or later)
-- Docker
-- Kubernetes cluster (e.g. GKE)
-- `kubectl` configured
-- MongoDB running in Kubernetes with:
-  - DB: `company`
-  - Collection: `employee`
-  - Auth: `admin` / `admin123` (Stored in GKE secrets)
+| Resource                  | Justification                                                                        |
+| ------------------------- | ------------------------------------------------------------------------------------ |
+| **MongoDB StatefulSet**   | Ensures stable network identity and persistent volume claims for database durability |
+| **Secrets**               | Used for managing sensitive credentials securely                                     |
+| **ClusterIP Service**     | Allows internal access from Ingress Controller                                       |
+| **Ingress**               | Cleaner, cost-effective way to expose service with domain mapping                    |
+| **Express.js**            | Lightweight, minimal overhead web framework ideal for microservices                  |
+| **MongoDB Native Driver** | Avoids ORM overhead; ideal for small projects and direct operations                  |
 
 ---
 
-## 🚀 Running the App Locally
+## 🛠️ Setup & Deployment
 
 ### 1. Install dependencies
 
@@ -49,56 +67,48 @@ employee-api/
 npm install
 ```
 
-### 2. Update MongoDB URI in `index.js` if needed:
+Update `index.js` connection string if testing locally:
 
 ```js
 const uri = "mongodb://admin:admin123@localhost:27017/?authSource=admin";
 ```
 
-### 3. Run the API server
+### 3. Run the server
 
 ```bash
 node index.js
 ```
 
-The app runs on:  
-`http://localhost:3000`
+The API will be accessible at: `http://localhost:3000`
 
 ---
 
 ## 📬 API Endpoints
 
-### ➕ `POST /employees/add`
+### ➕ POST /employees/add
 
-Create a new employee record.
-
-#### Request body:
+Create a new employee record
 
 ```json
 {
   "name": "Alice",
   "empCode": "E101",
-  "mobile": "77777777"
+  "mobile": "234234324"
 }
 ```
 
-### 📥 `GET /employees`
+### 📥 GET /employees
 
-Retrieve all employee records.
+Retrieve all employees
 
 ---
 
-## 🐳 Docker Setup
+## 🐳 Docker Instructions
 
-### Build the image:
+Build and run locally:
 
 ```bash
 docker build -t employee-api .
-```
-
-### Run locally:
-
-```bash
 docker run -p 3000:3000 employee-api
 ```
 
@@ -106,73 +116,31 @@ docker run -p 3000:3000 employee-api
 
 ## ☸️ Kubernetes Deployment
 
-1. Push the Docker image to a registry (e.g., Docker Hub):
+### 1. Push Docker image to DockerHub
 
 ```bash
-docker tag employee-api your-dockerhub-username/employee-api
-docker push your-dockerhub-username/employee-api
+docker tag employee-api your-dockerhub/employee-api
+docker push your-dockerhub/employee-api
 ```
 
-2. Create a deployment + service YAML (`employee-api-deployment.yaml`):
-
-```yaml
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: employee-api
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: employee-api
-  template:
-    metadata:
-      labels:
-        app: employee-api
-    spec:
-      containers:
-        - name: api
-          image: your-dockerhub-username/employee-api
-          ports:
-            - containerPort: 3000
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: employee-api-service
-spec:
-  selector:
-    app: employee-api
-  ports:
-    - port: 80
-      targetPort: 3000
-  type: LoadBalancer
-```
-
-3. Apply to cluster:
+### 2. Apply manifests
 
 ```bash
 kubectl apply -f employee-api-deployment.yaml
+kubectl apply -f employee-api-service.yaml
+kubectl apply -f employee-api-ingress.yaml
 ```
+
+Access the API via the configured domain in your Ingress.
 
 ---
 
-## 🧪 Example `curl` Usage
+## 🧪 Example curl
 
 ```bash
-curl -X POST http://localhost:3000/employees   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123"}'
+curl -X POST http://your-domain/employees   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123"}'
 
-curl http://localhost:3000/employees
+curl http://your-domain/employees
 ```
-
----
-
-## 📝 Notes
-
-- MongoDB must be accessible either through Kubernetes networking or via `localhost:27017` if port-forwarded.
-- Data is stored in:  
-  **DB:** `company`  
-  **Collection:** `employee`  
-  **Fields:** `name`, `empCode`, `mobile`
 
 ---
