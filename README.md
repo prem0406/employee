@@ -11,7 +11,7 @@ Build a lightweight REST API to store and retrieve employee data using MongoDB. 
 ## 📎 Assumptions
 
 - MongoDB will be used as the backend data store.
-- MongoDB credentials (`admin` / `admin123` provider here as plain text for Evaluators) are stored as a Kubernetes secret.
+- MongoDB credentials are stored as a Kubernetes secret.
 - The database and collection used are:
   - DB: `company`
   - Collection: `employee`
@@ -74,7 +74,7 @@ Create a new employee record
 }
 ```
 
-### 📥 GET /employees
+### 📥 GET /employee
 
 Retrieve all employees
 
@@ -82,11 +82,12 @@ Retrieve all employees
 
 ## 🐳 Docker Instructions
 
-Build and run locally:
+Pull and run locally:
 
 ```bash
-docker build -t pr3mkumar/employee-api:v1 .
-docker run -p 3000:3000 pr3mkumar/employee-api:v1
+docker pull pr3mkumar/employee-api:v3
+
+docker run -p 3000:3000 pr3mkumar/employee-api:v3
 ```
 
 ---
@@ -99,7 +100,7 @@ docker run -p 3000:3000 pr3mkumar/employee-api:v1
 docker push pr3mkumar/employee-api:v1
 ```
 
-### 2. Apply manifests
+### 2. Apply manifests (API)
 
 ```bash
 kubectl apply -f employee-api-configmap.yaml
@@ -108,7 +109,21 @@ kubectl apply -f employee-api-service.yaml
 kubectl apply -f employee-api-ingress.yaml
 ```
 
-Access the API via the configured domain in your Ingress.
+### 2. Apply manifests (MongoDB)
+
+Replace 'usename' and 'password' with yours.
+
+```bash
+kubectl create secret generic mongodb-secret \
+  --from-literal=MONGO_INITDB_ROOT_USERNAME=username \
+  --from-literal=MONGO_INITDB_ROOT_PASSWORD=password
+```
+
+```bash
+kubectl apply -f mongo-headless-service.yaml
+kubectl apply -f mongo-statefulset.yaml
+kubectl apply -f mongo-service.yaml
+```
 
 ---
 
@@ -124,26 +139,10 @@ https://hub.docker.com/repository/docker/pr3mkumar/employee-api/general
 
 ## 🧪 Example curl
 
+Replace 'your-domain' with employee-api-ingress IP Address or domain name mapped to it.
+
 ```bash
 curl -X POST http://your-domain/employee/add   -H "Content-Type: application/json"   -d '{"name": "John", "empCode": "E123", "mobile": "99999999"}'
 
 curl http://your-domain/employee
-```
-
-## Mongodb deployment
-
-Following command is to store the db credentials into Secrets
-
-```bash
-kubectl create secret generic mongodb-secret \
-  --from-literal=MONGO_INITDB_ROOT_USERNAME=admin \
-  --from-literal=MONGO_INITDB_ROOT_PASSWORD=admin123
-```
-
-Apply mongodb StateFulSet
-
-```bash
-kubectl apply -f mongo-headless-service.yaml
-kubectl apply -f mongo-statefulset.yaml
-kubectl apply -f mongo-service.yaml
 ```
