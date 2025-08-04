@@ -94,22 +94,7 @@ docker run -p 3000:3000 pr3mkumar/employee-api:v3
 
 ## ☸️ Kubernetes Deployment
 
-### 1. Push Docker image to DockerHub
-
-```bash
-docker push pr3mkumar/employee-api:v1
-```
-
-### 2. Apply manifests (API)
-
-```bash
-kubectl apply -f employee-api-configmap.yaml
-kubectl apply -f employee-api-deployment.yaml
-kubectl apply -f employee-api-service.yaml
-kubectl apply -f employee-api-ingress.yaml
-```
-
-### 2. Apply manifests (MongoDB)
+## 1. Apply manifests (MongoDB)
 
 Replace 'usename' and 'password' with yours.
 
@@ -125,19 +110,28 @@ kubectl apply -f mongo-statefulset.yaml
 kubectl apply -f mongo-service.yaml
 ```
 
+## 2. Apply manifests (API)
+
+```bash
+kubectl apply -f employee-api-configmap.yaml
+kubectl apply -f employee-api-deployment.yaml
+kubectl apply -f employee-api-service.yaml
+kubectl apply -f employee-api-ingress.yaml
+```
+
 ---
 
-## Github link
+## 3. Github link
 
 https://github.com/prem0406/employee
 
-## Docker hub link
+## 4. Docker hub link
 
 https://hub.docker.com/repository/docker/pr3mkumar/employee-api/general
 
 ---
 
-## 🧪 Example curl
+## 5. 🧪 Example curl
 
 Replace 'your-domain' with employee-api-ingress IP Address or domain name mapped to it.
 
