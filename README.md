@@ -32,13 +32,17 @@ Build a lightweight REST API to store and retrieve employee data using MongoDB. 
 ### Project Structure
 
 ```
+dbYamlFiles/         # Mongob GKE yaml files
+├── mongo-headless-service.yaml
+├── mongo-service.yaml
+├── mongo-statefulset.yaml
 employee-api/
 ├── index.js              # Main application logic
 ├── mongo.js
 ├── package-lock.json
 ├── package.json
 ├── Dockerfile
-├── employee-api-configmap.yaml
+├── employee-api-configmap.yaml   #configMap
 ├── employee-api-deployment.yaml
 ├── employee-api-service.yaml
 ├── employee-api-ingress.yaml
